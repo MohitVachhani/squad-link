@@ -3,7 +3,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 
@@ -21,10 +21,11 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from squadlink.config import Settings
-from squadlink.db import Base
+from squadlink.db import Base, engine_kwargs
 
-# DATABASE_URL comes from backend/.env (same as the app), never from alembic.ini.
-config.set_main_option("sqlalchemy.url", Settings().database_url.replace("%", "%%"))
+# DATABASE_URL comes from the environment / backend/.env (same as the app), never from alembic.ini.
+settings = Settings()
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -70,10 +71,9 @@ async def run_async_migrations() -> None:
 
     """
 
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+    # Same connection options as the app, so migrations also work over Supabase's transaction pooler (Vercel).
+    connectable = create_async_engine(
+        settings.database_url, **{**engine_kwargs(settings.db_serverless), "poolclass": pool.NullPool}
     )
 
     async with connectable.connect() as connection:

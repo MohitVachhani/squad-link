@@ -5,7 +5,6 @@
 backend/data/raw
 backend/.venv
 backend/tests
-backend/migrations
 **/__pycache__
 **/.pytest_cache
 frontend/node_modules
