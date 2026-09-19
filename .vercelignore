@@ -1,0 +1,14 @@
+# Never upload secrets, raw data, local envs or build junk.
+**/.env
+**/.env.*
+!**/.env.example
+backend/data/raw
+backend/.venv
+backend/tests
+backend/migrations
+**/__pycache__
+**/.pytest_cache
+frontend/node_modules
+frontend/dist
+docs
+.git

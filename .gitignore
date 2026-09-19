@@ -1,0 +1,10 @@
+backend/data/raw/*
+!backend/data/raw/.gitkeep
+backend/data/unmatched_*.csv
+__pycache__/
+.venv/
+.pytest_cache/
+node_modules/
+dist/
+.env
+.vercel
